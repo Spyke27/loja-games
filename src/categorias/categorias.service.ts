@@ -5,7 +5,7 @@ import { UpdateCategoriaDto } from './dto/update-categoria.dto';
 import { Categoria } from './entities/categoria.entity';
 
 @Injectable()
-export class UsersService {
+export class CategoriasService {
   constructor(
     @Inject('CATEGORIAS_REPOSITORY')
     private categoriasRepository: Repository<Categoria>
@@ -13,21 +13,21 @@ export class UsersService {
     async listar():Promise<Categoria[]>{
       return this.categoriasRepository.find();
     }
-  private users: Categoria[] = []; 
+  private categorias: Categoria[] = []; 
   
-  create(createUserDto: CreateCategoriaDto) {
-    const IdMaxAtual = this.users[this.users.length - 1]?.id||0;
+  create(createCategoriaDto: CreateCategoriaDto) {
+    const IdMaxAtual = this.categorias[this.categorias.length - 1]?.id||0;
     const id = IdMaxAtual + 1;
-    const user = {
+    const categoria = {
       id,
-      ...CreateCategoriaDto
+      ...createCategoriaDto
     };
-    this.users.push(categoria);
+    this.categorias.push(categoria);
     return categoria;
   }
 
   findAll() {
-    return `This action returns all categorias`;
+    return this.categorias;
   }
 
   findOne(id: number) {
@@ -35,7 +35,9 @@ export class UsersService {
   }
 
   update(id: number, updateCategoriaDto: UpdateCategoriaDto) {
-    return `This action updates a #${id} categoria`;
+    const index = this.categorias.findIndex((categoria)=> categoria.id === id);
+
+    return this.categorias[index];
   }
 
   remove(id: number) {
