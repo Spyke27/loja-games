@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { CreateCategoriaDto } from './dto/create-categoria.dto';
 import { UpdateCategoriaDto } from './dto/update-categoria.dto';
@@ -31,16 +31,37 @@ export class CategoriasService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} categoria`;
+    const index = this.categorias.findIndex((categoria)=> categoria.id === id);
+    if(index === -1){
+      throw new NotFoundException(`Categoria com ID ${id} não encontrado.`) 
+    }
+
+    return this.categorias[index]
   }
 
   update(id: number, updateCategoriaDto: UpdateCategoriaDto) {
-    const index = this.categorias.findIndex((categoria)=> categoria.id === id);
+    const categoria = this.findOne(id);
+    const newCategoria = {
+      ...categoria,
+      ...updateCategoriaDto
+    }
+    const index = this.categorias.findIndex((categoria) => categoria.id === id);
+    if(index === -1){
+      throw new NotFoundException(`Categoria com ID ${id} não encontrado.`) 
+    }
+    this.categorias[index] = newCategoria;
 
-    return this.categorias[index];
+    return newCategoria;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} categoria`;
+  remove(id: number){
+    const index = this.categorias.findIndex((categoria) => categoria.id === id);
+
+    if(index === -1){
+      throw new NotFoundException(`Categoria com ID ${id} não encontrado.`) 
+    }
+    this.categorias.splice(index, 1) 
+
+    return `Categoria com o ID ${id} removida com sucesso.`;
   }
 }
